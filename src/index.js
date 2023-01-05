@@ -41,29 +41,40 @@ function appendCountryMarkup(countries) {
       'Too many matches found. Please enter a more specific name.'
     );
   } else if (countries.length > 2 && countries.length <= 10) {
-    const listEl = countries.map(country => {
-      return `<div class = "country-list">
+    renderList();
+  } else {
+    clearCountryContainer();
+
+    renderCountryInfo();
+  }
+}
+
+function renderList() {
+  const listEl = countries.map(country => {
+    return `<li class = "country_list">
 			<img src="${country.flags.svg}" height = 20px, width = 20px>
 			<span class = "name">${country.name.official}</span>
-			</div>`;
-    });
-    refs.countryList.insertAdjacentHTML('beforeend', listEl.join(''));
-  } else {
-    const countryEl = countries.map(country => {
-      const languageKey = Object.keys(country.languages)[0];
+			</li>`;
+  });
+  refs.countryList.insertAdjacentHTML('beforeend', listEl.join(''));
+}
 
-      return `<div class = "country">
-			<img src="${country.flags.svg}" height = 30px, width = 40px>
-			<span class = "country-name">${country.name.official}</span>
-			<p class="capital">Capital: ${country.capital}</p>
-			<p class="population">Population: ${country.population}</p>
-			<p class="language">Language: ${country.languages[languageKey]}</p>
-			</div>`;
-    });
-    refs.countryInfo.insertAdjacentHTML('beforeend', countryEl);
-  }
+function renderCountryInfo() {
+  const countryEl = countries.map(country => {
+    const languageKey = Object.keys(country.languages)[0];
+
+    return `<div class = "country_info">
+		<img src="${country.flags.svg}" height = 30px, width = 40px>
+		<span class = "country-name">${country.name.official}</span>
+		<p class="capital">Capital: ${country.capital}</p>
+		<p class="population">Population: ${country.population}</p>
+		<p class="language">Language: ${country.languages[languageKey]}</p>
+		</div>`;
+  });
+  refs.countryInfo.insertAdjacentHTML('beforeend', countryEl);
 }
 
 function clearCountryContainer() {
   refs.countryInfo.innerHTML = '';
+  refs.countryList.innerHTML = '';
 }
