@@ -27,10 +27,11 @@ function onSearch(e) {
     return;
   }
 
-  countryService
-    .fetchCountries()
-    .then(appendCountryMarkup)
+  countryService.fetchCountries().then(countries => {
+		clearCountryContainer();
+		appendCountryMarkup(countries)})
     .catch(error => {
+		console.log(error);
       Notiflix.Notify.failure('Oops, there is no country with that name');
     });
 }
@@ -41,38 +42,29 @@ function appendCountryMarkup(countries) {
       'Too many matches found. Please enter a more specific name.'
     );
   } else if (countries.length > 2 && countries.length <= 10) {
-    renderList();
+	const listEl = countries.map(country => {
+		return `<li class = "country_list">
+			  <img src="${country.flags.svg}" height = 20px, width = 20px>
+			  <span class = "name">${country.name.official}</span>
+			  </li>`;
+	 });
+	 refs.countryList.insertAdjacentHTML('beforeend', listEl.join(''));
   } else {
-    clearCountryContainer();
-
-    renderCountryInfo();
+	const countryEl = countries.map(country => {
+		const languageKey = Object.keys(country.languages)[0];
+  
+		return `<div class = "country_info">
+		  <img src="${country.flags.svg}" height = 30px, width = 40px>
+		  <span class = "country-name">${country.name.official}</span>
+		  <p class="capital">Capital: ${country.capital}</p>
+		  <p class="population">Population: ${country.population}</p>
+		  <p class="language">Language: ${country.languages[languageKey]}</p>
+		  </div>`;
+	 });
+	 refs.countryInfo.insertAdjacentHTML('beforeend', countryEl);
   }
 }
 
-function renderList() {
-  const listEl = countries.map(country => {
-    return `<li class = "country_list">
-			<img src="${country.flags.svg}" height = 20px, width = 20px>
-			<span class = "name">${country.name.official}</span>
-			</li>`;
-  });
-  refs.countryList.insertAdjacentHTML('beforeend', listEl.join(''));
-}
-
-function renderCountryInfo() {
-  const countryEl = countries.map(country => {
-    const languageKey = Object.keys(country.languages)[0];
-
-    return `<div class = "country_info">
-		<img src="${country.flags.svg}" height = 30px, width = 40px>
-		<span class = "country-name">${country.name.official}</span>
-		<p class="capital">Capital: ${country.capital}</p>
-		<p class="population">Population: ${country.population}</p>
-		<p class="language">Language: ${country.languages[languageKey]}</p>
-		</div>`;
-  });
-  refs.countryInfo.insertAdjacentHTML('beforeend', countryEl);
-}
 
 function clearCountryContainer() {
   refs.countryInfo.innerHTML = '';
